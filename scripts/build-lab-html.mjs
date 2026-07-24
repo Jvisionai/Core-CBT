@@ -18,8 +18,8 @@ for (const r of results) { const c = r.anchor.category; (catStat[c] = catStat[c]
 const slim = results.map((r) => ({
   cat: r.anchor.category, src: r.anchor.source, no: r.anchor.no,
   oq: r.anchor.question_text, oa: r.anchor.answer,
-  A: r.A.accepted ? { q: r.A.accepted.question_text, e: r.A.accepted.examples || '', a: r.A.accepted.answer, c: r.A.accepted.comment || '', f: r.A.flags || [] } : { rej: true, f: r.A.flags || [] },
-  B: r.B.accepted ? { q: r.B.accepted.question_text, e: r.B.accepted.examples || '', a: r.B.accepted.answer, c: r.B.accepted.comment || '', f: r.B.flags || [] } : { rej: true, f: r.B.flags || [] },
+  A: r.A.accepted ? { q: r.A.accepted.question_text, e: r.A.accepted.examples || '', a: r.A.accepted.answer, c: r.A.accepted.comment || '', f: r.A.flags || [], fr: r.A.failureReasons || [] } : { rej: true, f: r.A.flags || [], fr: r.A.failureReasons || [] },
+  B: r.B.accepted ? { q: r.B.accepted.question_text, e: r.B.accepted.examples || '', a: r.B.accepted.answer, c: r.B.accepted.comment || '', f: r.B.flags || [], fr: r.B.failureReasons || [] } : { rej: true, f: r.B.flags || [], fr: r.B.failureReasons || [] },
 }));
 const DATA = { summary: { n: results.length, A: agg(results, 'A'), B: agg(results, 'B') }, checkpoints, catStat, results: slim };
 const blob = JSON.stringify(DATA).replace(/</g, '\\u003c');
@@ -62,6 +62,7 @@ const html = `<title>AI Quality Lab — 결과 도구</title>
   .flag{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:var(--bad);color:#fff} .ok{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 6px;border-radius:5px;background:#E4F5EC;color:var(--good)}
   .field{margin-bottom:8px} .q{font-size:13.5px;white-space:pre-wrap} .ans{font-family:var(--mono);font-size:12.5px;font-weight:600} .ans.er{color:var(--bad)} .cm{font-size:12px;color:var(--muted)} pre{font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;background:#fff;border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin:0;overflow-x:auto}
   .rej{color:var(--muted);font-size:12.5px} .note{font-size:12.5px;color:var(--muted);background:var(--panel);border-radius:8px;padding:11px 14px;margin-bottom:16px}
+  .fr{margin:6px 0 0;padding-left:16px} .fr li{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-bottom:4px;line-height:1.45}
 </style>
 <div class="wrap">
   <p class="eyebrow">AI Quality Lab · 100개 결과 · JSON식(A) vs DB·RAG식(B)</p>
@@ -110,14 +111,19 @@ function show(t){
     '<div class="note">"오류감소"=A오류율−B오류율. 표본이 커질수록(→100) 차이가 좁혀졌음: RAG 효과는 있으나 소표본에서 과대평가됐던 것.</div>';
 })();
 // 문제 비교 카드
+function frHtml(fr,title){
+  if(!fr||!fr.length) return '';
+  return '<div class="field"><span class="lb">'+title+'</span><ul class="fr">'+fr.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>';
+}
 function armHtml(arm,label,cls){
   const bad=arm.f&&arm.f.length;
-  if(arm.rej) return '<div class="arm '+cls+(bad?' bad':'')+'"><div class="arm-h">'+label+'</div><div class="rej">반려(채택 안됨)</div></div>';
+  if(arm.rej) return '<div class="arm '+cls+' bad"><div class="arm-h">'+label+' <span class="flag">반려(채택 안됨)</span></div>'+frHtml(arm.fr,'반려 사유 (시도별)')+'</div>';
   return '<div class="arm '+cls+(bad?' bad':'')+'"><div class="arm-h">'+label+' '+(bad?'<span class="flag">⚠ '+arm.f.map(esc).join(', ')+'</span>':'<span class="ok">✓ 정상</span>')+'</div>'+
     '<div class="field"><span class="lb">문제</span><div class="q">'+esc(arm.q)+'</div></div>'+
     (arm.e?'<div class="field"><span class="lb">보기/코드</span><pre>'+esc(arm.e)+'</pre></div>':'')+
     '<div class="field"><span class="lb">생성 정답</span><div class="ans '+(bad?'er':'')+'">'+esc(arm.a)+'</div></div>'+
-    '<div class="field"><span class="lb">해설</span><div class="cm">'+esc(arm.c)+'</div></div></div>';
+    '<div class="field"><span class="lb">해설</span><div class="cm">'+esc(arm.c)+'</div></div>'+
+    frHtml(arm.fr,'재생성 사유 (채택 전 시도)')+'</div>';
 }
 function renderCards(){
   const cat=document.getElementById('fcat').value, errOnly=document.getElementById('ferr').checked;
