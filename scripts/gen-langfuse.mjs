@@ -28,9 +28,9 @@ async function callResponses(model, input, maxTokens) {
   return { text, usage: d.usage };
 }
 
-// Langfuse에서 프롬프트 가져오기 (UI에서 수정 가능한 그 프롬프트)
-const promptClient = await lf.getPrompt('practical-generator');
-console.log(`Langfuse 프롬프트 로드: practical-generator v${promptClient.version}\n`);
+// Langfuse에서 최신 프롬프트 가져오기 (UI에서 수정→저장하면 그 버전이 바로 반영됨)
+const promptClient = await lf.getPrompt('practical-generator', undefined, { label: 'latest', cacheTtlSeconds: 0 });
+console.log(`Langfuse 프롬프트 로드: practical-generator v${promptClient.version} (latest)\n`);
 
 const anchors = await sql`
   SELECT p.id, s.key AS source, p.problem_no, p.category, p.question_text,
