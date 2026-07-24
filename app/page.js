@@ -1,4 +1,5 @@
-﻿import { FileText, LayoutGrid, CheckCircle, BrainCircuit, Star, Trophy, Sparkles } from 'lucide-react';
+﻿import Link from 'next/link';
+import { FileText, LayoutGrid, CheckCircle, BrainCircuit, Star, Trophy, Sparkles } from 'lucide-react';
 import StartLoginModalButton from '@/app/_components/StartLoginModalButton';
 
 const features = [
@@ -95,6 +96,13 @@ export default function Home() {
           </div>
           <div className="mt-8 flex flex-col items-center">
             <StartLoginModalButton />
+            <Link
+              href="/frequent"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-700 shadow-sm transition hover:border-indigo-400"
+            >
+              🔥 빈출 문제 보기
+              <span className="rounded-full bg-indigo-600 px-1.5 py-0.5 text-[10px] font-bold text-white">Beta</span>
+            </Link>
           </div>
         </div>
 
