@@ -2,7 +2,7 @@ import fs from 'fs';
 const IN = process.argv[2] || '/private/tmp/claude-501/-Users-bobs-Desktop-bobs-project-jchsanGi/baba59d8-18dc-4777-a5af-e9513498e479/scratchpad/compare100.json';
 const OUTJSON = process.argv[3] || '/private/tmp/claude-501/-Users-bobs-Desktop-bobs-project-jchsanGi/baba59d8-18dc-4777-a5af-e9513498e479/scratchpad/checkpoints.json';
 const OUTHTML = process.argv[4] || '/private/tmp/claude-501/-Users-bobs-Desktop-bobs-project-jchsanGi/baba59d8-18dc-4777-a5af-e9513498e479/scratchpad/checkpoints.html';
-const CHECKPOINTS = [25, 50, 100];
+const CHECKPOINTS = [25, 50, 75, 100];
 
 const { results } = JSON.parse(fs.readFileSync(IN, 'utf8'));
 const agg = (rows, arm) => {
