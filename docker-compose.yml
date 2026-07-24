@@ -1,0 +1,14 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: cbt_pg
+    environment:
+      POSTGRES_USER: cbt
+      POSTGRES_PASSWORD: cbt
+      POSTGRES_DB: cbt
+    ports:
+      - "5433:5432"
+    volumes:
+      - cbt_pgdata:/var/lib/postgresql/data
+volumes:
+  cbt_pgdata:
