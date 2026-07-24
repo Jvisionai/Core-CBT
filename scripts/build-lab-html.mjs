@@ -18,8 +18,8 @@ for (const r of results) { const c = r.anchor.category; (catStat[c] = catStat[c]
 const slim = results.map((r) => ({
   cat: r.anchor.category, src: r.anchor.source, no: r.anchor.no,
   oq: r.anchor.question_text, oa: r.anchor.answer,
-  A: r.A.accepted ? { q: r.A.accepted.question_text, e: r.A.accepted.examples || '', a: r.A.accepted.answer, c: r.A.accepted.comment || '', f: r.A.flags || [], fr: r.A.failureReasons || [] } : { rej: true, f: r.A.flags || [], fr: r.A.failureReasons || [] },
-  B: r.B.accepted ? { q: r.B.accepted.question_text, e: r.B.accepted.examples || '', a: r.B.accepted.answer, c: r.B.accepted.comment || '', f: r.B.flags || [], fr: r.B.failureReasons || [] } : { rej: true, f: r.B.flags || [], fr: r.B.failureReasons || [] },
+  A: r.A.accepted ? { q: r.A.accepted.question_text, e: r.A.accepted.examples || '', a: r.A.accepted.answer, c: r.A.accepted.comment || '', f: r.A.flags || [], fr: r.A.failureReasons || [] } : { rej: true, f: r.A.flags || [], fr: r.A.failureReasons || [], rg: r.A.rejectedGens || [] },
+  B: r.B.accepted ? { q: r.B.accepted.question_text, e: r.B.accepted.examples || '', a: r.B.accepted.answer, c: r.B.accepted.comment || '', f: r.B.flags || [], fr: r.B.failureReasons || [] } : { rej: true, f: r.B.flags || [], fr: r.B.failureReasons || [], rg: r.B.rejectedGens || [] },
 }));
 const DATA = { summary: { n: results.length, A: agg(results, 'A'), B: agg(results, 'B') }, checkpoints, catStat, results: slim };
 const blob = JSON.stringify(DATA).replace(/</g, '\\u003c');
@@ -63,6 +63,7 @@ const html = `<title>AI Quality Lab — 결과 도구</title>
   .field{margin-bottom:8px} .q{font-size:13.5px;white-space:pre-wrap} .ans{font-family:var(--mono);font-size:12.5px;font-weight:600} .ans.er{color:var(--bad)} .cm{font-size:12px;color:var(--muted)} pre{font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;background:#fff;border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin:0;overflow-x:auto}
   .rej{color:var(--muted);font-size:12.5px} .note{font-size:12.5px;color:var(--muted);background:var(--panel);border-radius:8px;padding:11px 14px;margin-bottom:16px}
   .fr{margin:6px 0 0;padding-left:16px} .fr li{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-bottom:4px;line-height:1.45}
+  .rgen{border-left:2px solid var(--bad);padding-left:10px;margin-bottom:10px} .rgen .q{font-size:13px}
 </style>
 <div class="wrap">
   <p class="eyebrow">AI Quality Lab · 100개 결과 · JSON식(A) vs DB·RAG식(B)</p>
@@ -117,7 +118,14 @@ function frHtml(fr,title){
 }
 function armHtml(arm,label,cls){
   const bad=arm.f&&arm.f.length;
-  if(arm.rej) return '<div class="arm '+cls+' bad"><div class="arm-h">'+label+' <span class="flag">반려(채택 안됨)</span></div>'+frHtml(arm.fr,'반려 사유 (시도별)')+'</div>';
+  if(arm.rej){
+    const rg=(arm.rg||[]);
+    const gens=rg.map((g,i)=>!g?'':'<div class="rgen"><div class="lb">반려된 생성물 '+(i+1)+'</div>'+
+      '<div class="q">'+esc(g.question_text)+'</div>'+(g.examples?'<pre>'+esc(g.examples)+'</pre>':'')+
+      '<div class="ans er">정답: '+esc(g.answer)+'</div><div class="cm">'+esc(g.comment)+'</div></div>').join('');
+    return '<div class="arm '+cls+' bad"><div class="arm-h">'+label+' <span class="flag">반려(채택 안됨)</span></div>'+
+      (gens||'<div class="rej">생성물 미저장(이전 실행) — 재실행 필요</div>')+frHtml(arm.fr,'반려 사유 (시도별)')+'</div>';
+  }
   return '<div class="arm '+cls+(bad?' bad':'')+'"><div class="arm-h">'+label+' '+(bad?'<span class="flag">⚠ '+arm.f.map(esc).join(', ')+'</span>':'<span class="ok">✓ 정상</span>')+'</div>'+
     '<div class="field"><span class="lb">문제</span><div class="q">'+esc(arm.q)+'</div></div>'+
     (arm.e?'<div class="field"><span class="lb">보기/코드</span><pre>'+esc(arm.e)+'</pre></div>':'')+

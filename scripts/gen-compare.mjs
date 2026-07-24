@@ -63,9 +63,11 @@ async function answerCheck(gen) {
   });
 }
 
+const slimGen = (g) => (g ? { question_text: g.question_text, examples: g.examples || '', answer: g.answer, comment: g.comment || '' } : null);
 async function runArm(anchor, extraContext) {
   const original = { question_text: anchor.question_text, examples: anchor.examples, category: anchor.category, subcategory: '' };
   const reasons = [];
+  const rejectedGens = []; // 반려된 생성물도 보존
   let accepted = null, attempts = 0, regen = 0;
   for (let attempt = 0; attempt <= MAX_REGEN; attempt += 1) {
     attempts += 1; if (attempt >= 1) regen += 1;
@@ -75,13 +77,14 @@ async function runArm(anchor, extraContext) {
     try { gen = parseModelJson(await callResponses(GEN_MODEL, prompt, 1500)); } catch { reasons.push('생성 오류'); continue; }
     if (!gen) { reasons.push('JSON 파싱 실패'); continue; }
     const gate = validateGeneratedProblem(gen, original);
-    if (!gate.ok) { reasons.push(gate.reason); continue; }
+    if (!gate.ok) { reasons.push(gate.reason); rejectedGens.push(slimGen(gen)); continue; }
     let verdict = null;
     try { verdict = parseModelJson(await callResponses(judgeModelFor(anchor.category), buildJudgePrompt({ gen, original, answer: anchor.answer }), 600)); } catch {}
     if (verdict && verdict.concept_same && verdict.answer_correct && verdict.no_leak && verdict.difficulty_ok) { accepted = gen; break; }
     reasons.push(`심판 반려: ${verdict?.reason || '판정 실패'}`);
+    rejectedGens.push(slimGen(gen));
   }
-  const out = { attempts, regenerated: regen > 0, accepted, failureReasons: reasons };
+  const out = { attempts, regenerated: regen > 0, accepted, failureReasons: reasons, rejectedGens };
   if (accepted) {
     out.rag = await ragScore(accepted, anchor.category);
     const ac = await answerCheck(accepted);
