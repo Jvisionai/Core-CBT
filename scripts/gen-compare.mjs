@@ -13,21 +13,36 @@ const RAG_THRESHOLD = 0.45;
 const OUT = process.argv[3] || '/private/tmp/claude-501/-Users-bobs-Desktop-bobs-project-jchsanGi/baba59d8-18dc-4777-a5af-e9513498e479/scratchpad/compare-results.json';
 const judgeModelFor = (c) => (c === 'Code' || c === 'SQL' ? 'gpt-4.1' : 'gpt-4.1-mini');
 
+// 일시적 오류(타임아웃·429·5xx)에 재시도
+async function retry(fn, tries = 4, base = 2000) {
+  let last;
+  for (let i = 0; i < tries; i += 1) {
+    try { return await fn(); } catch (e) { last = e; if (i < tries - 1) await new Promise((r) => setTimeout(r, base * (i + 1))); }
+  }
+  throw last;
+}
+const TIMEOUT = 150000;
+
 async function callResponses(model, input, maxTokens) {
-  const r = await fetch('https://api.openai.com/v1/responses', {
-    method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${KEY}` },
-    body: JSON.stringify({ model, input, max_output_tokens: maxTokens }),
+  return retry(async () => {
+    const r = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${KEY}` },
+      body: JSON.stringify({ model, input, max_output_tokens: maxTokens }), signal: AbortSignal.timeout(TIMEOUT),
+    });
+    if (!r.ok) throw new Error(`openai ${model} ${r.status}`);
+    const d = await r.json();
+    return (d.output || []).flatMap((i) => i?.content || []).map((c) => c?.text || '').join('').trim();
   });
-  if (!r.ok) throw new Error(`openai ${model} ${r.status}`);
-  const d = await r.json();
-  return (d.output || []).flatMap((i) => i?.content || []).map((c) => c?.text || '').join('').trim();
 }
 async function embed(text) {
-  const r = await fetch('https://api.openai.com/v1/embeddings', {
-    method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${KEY}` },
-    body: JSON.stringify({ model: 'text-embedding-3-small', input: [text] }),
+  return retry(async () => {
+    const r = await fetch('https://api.openai.com/v1/embeddings', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${KEY}` },
+      body: JSON.stringify({ model: 'text-embedding-3-small', input: [text] }), signal: AbortSignal.timeout(TIMEOUT),
+    });
+    if (!r.ok) throw new Error(`embed ${r.status}`);
+    return (await r.json()).data[0].embedding;
   });
-  return (await r.json()).data[0].embedding;
 }
 async function ragScore(gen, category) {
   const vec = `[${(await embed(`[${category}] ${gen.question_text}\n${gen.examples || ''}`.slice(0, 6000))).join(',')}]`;
@@ -36,16 +51,18 @@ async function ragScore(gen, category) {
   return rows[0] ? Number(rows[0].sim) : 0;
 }
 async function answerCheck(gen) {
-  const prompt = `실기 문제의 정답·해설을 판정하라. JSON만: {"consistent":bool,"correct":bool,"reason":"짧은 사유"}
+  return retry(async () => {
+    const prompt = `실기 문제의 정답·해설을 판정하라. JSON만: {"consistent":bool,"correct":bool,"reason":"짧은 사유"}
 문제: ${gen.question_text}\n${gen.examples ? `보기:\n${gen.examples}\n` : ''}정답: ${gen.answer}\n해설: ${gen.comment || ''}`;
-  const r = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${KEY}` },
-    body: JSON.stringify({ model: 'gpt-4.1-mini', messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' }, temperature: 0 }),
+    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${KEY}` },
+      body: JSON.stringify({ model: 'gpt-4.1-mini', messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' }, temperature: 0 }), signal: AbortSignal.timeout(TIMEOUT),
+    });
+    if (!r.ok) throw new Error(`answerCheck ${r.status}`);
+    return JSON.parse((await r.json()).choices[0].message.content);
   });
-  return JSON.parse((await r.json()).choices[0].message.content);
 }
 
-// arm 한 번 실행 (extraContext = 방식 B의 RAG 예시들)
 async function runArm(anchor, extraContext) {
   const original = { question_text: anchor.question_text, examples: anchor.examples, category: anchor.category, subcategory: '' };
   const reasons = [];
@@ -84,35 +101,37 @@ const anchors = await sql`
   ORDER BY random() LIMIT ${N}`;
 
 const results = [];
+const save = () => {
+  const agg = (arm) => {
+    const acc = results.filter((r) => r[arm].accepted).length;
+    const regen = results.filter((r) => r[arm].regenerated).length;
+    const err = results.filter((r) => r[arm].accepted && r[arm].flags?.length).length;
+    return { accepted: acc, regenRate: results.length ? ((regen / results.length) * 100).toFixed(0) : '0', errRate: acc ? ((err / acc) * 100).toFixed(0) : '0' };
+  };
+  fs.writeFileSync(OUT, JSON.stringify({ summary: { n: results.length, A: agg('A'), B: agg('B') }, results }, null, 2));
+};
+
+let done = 0;
 for (const a of anchors) {
-  console.log(`\n[${a.source}#${a.problem_no} ${a.category}] ${a.question_text.slice(0, 40)}...`);
-  // 방식 B용: 비슷한 기출 3개 검색 (앵커 자신 제외)
-  const similar = await sql`
-    SELECT p.question_text, p.answer FROM practical_problems p, (SELECT embedding FROM practical_problems WHERE id=${a.id}) anc
-    WHERE p.id <> ${a.id} AND p.category=${a.category} AND p.embedding IS NOT NULL
-    ORDER BY p.embedding <=> anc.embedding LIMIT 3`;
-  const ctx = similar.map((s, i) => `예시${i + 1}) 문제: ${s.question_text}\n   정답: ${s.answer}`).join('\n');
-
-  console.log('  방식 A (본보기 1개) 실행...');
-  const A = await runArm(a, null);
-  console.log(`    → ${A.accepted ? '채택' : '반려'} · 재생성 ${A.regenerated ? 'O' : 'X'} · 오류 ${A.flags?.join(',') || '없음'}`);
-  console.log('  방식 B (비슷한 기출 3개 참고) 실행...');
-  const B = await runArm(a, ctx);
-  console.log(`    → ${B.accepted ? '채택' : '반려'} · 재생성 ${B.regenerated ? 'O' : 'X'} · 오류 ${B.flags?.join(',') || '없음'}`);
-
-  results.push({ anchor: { source: a.source, no: a.problem_no, category: a.category, question_text: a.question_text, examples: a.examples, answer: a.answer }, similar: similar.map((s) => s.question_text), A, B });
+  done += 1;
+  try {
+    const similar = await sql`
+      SELECT p.question_text, p.answer FROM practical_problems p, (SELECT embedding FROM practical_problems WHERE id=${a.id}) anc
+      WHERE p.id <> ${a.id} AND p.category=${a.category} AND p.embedding IS NOT NULL
+      ORDER BY p.embedding <=> anc.embedding LIMIT 3`;
+    const ctx = similar.map((s, i) => `예시${i + 1}) 문제: ${s.question_text}\n   정답: ${s.answer}`).join('\n');
+    const A = await runArm(a, null);
+    const B = await runArm(a, ctx);
+    results.push({ anchor: { source: a.source, no: a.problem_no, category: a.category, question_text: a.question_text, examples: a.examples, answer: a.answer }, similar: similar.map((s) => s.question_text), A, B });
+    save(); // 앵커마다 중간 저장 — 크래시해도 진행분 보존
+    console.log(`${done}/${anchors.length} [${a.source}#${a.problem_no} ${a.category}] A:${A.accepted ? '채택' : '반려'}${A.flags?.length ? '⚠' : ''} B:${B.accepted ? '채택' : '반려'}${B.flags?.length ? '⚠' : ''}`);
+  } catch (e) {
+    console.log(`${done}/${anchors.length} [${a.source}#${a.problem_no}] 앵커 실패 — 스킵: ${String(e.message).slice(0, 60)}`);
+  }
 }
 
-const agg = (arm) => {
-  const acc = results.filter((r) => r[arm].accepted).length;
-  const regen = results.filter((r) => r[arm].regenerated).length;
-  const err = results.filter((r) => r[arm].accepted && r[arm].flags?.length).length;
-  return { accepted: acc, regenRate: ((regen / results.length) * 100).toFixed(0), errRate: acc ? ((err / acc) * 100).toFixed(0) : '0' };
-};
-const summary = { n: results.length, A: agg('A'), B: agg('B') };
-fs.writeFileSync(OUT, JSON.stringify({ summary, results }, null, 2));
-console.log(`\n=== 요약 (앵커 ${summary.n}) ===`);
-console.log(`방식 A: 채택 ${summary.A.accepted} · 재생성률 ${summary.A.regenRate}% · 오류율 ${summary.A.errRate}%`);
-console.log(`방식 B: 채택 ${summary.B.accepted} · 재생성률 ${summary.B.regenRate}% · 오류율 ${summary.B.errRate}%`);
-console.log(`결과 저장: ${OUT}`);
+const s = JSON.parse(fs.readFileSync(OUT, 'utf8')).summary;
+console.log(`\n=== 요약 (앵커 ${s.n}) ===`);
+console.log(`방식 A: 채택 ${s.A.accepted} · 재생성률 ${s.A.regenRate}% · 오류율 ${s.A.errRate}%`);
+console.log(`방식 B: 채택 ${s.B.accepted} · 재생성률 ${s.B.regenRate}% · 오류율 ${s.B.errRate}%`);
 await sql.end();
