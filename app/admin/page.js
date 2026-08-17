@@ -773,6 +773,12 @@ export default function AdminPage() {
             >
               실기 힌트
             </Link>
+            <Link
+              href="/admin/ai-lab"
+              className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-semibold text-sky-800 hover:bg-sky-100 dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-200 dark:hover:bg-sky-950/70"
+            >
+              AI 검증 실험실
+            </Link>
             <button
               onClick={() => signOut({ callbackUrl: '/' })}
               className="px-4 py-2 rounded-lg border border-rose-200 bg-rose-50 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300 text-rose-700 font-semibold hover:bg-rose-100 dark:hover:bg-rose-950/60"

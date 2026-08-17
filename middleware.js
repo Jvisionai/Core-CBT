@@ -6,13 +6,14 @@ const requireLoginForProtectedRoutes = String(process.env.REQUIRE_LOGIN_FOR_PROT
 
 export default auth((req) => {
   const { pathname, origin } = req.nextUrl;
+  const isPublicAiLab = pathname === '/admin/ai-lab';
   const isAdminPage = pathname === '/admin' || pathname.startsWith('/admin/');
   const isAdminApi = pathname === '/api/admin' || pathname.startsWith('/api/admin/');
   const isProtected = protectedPrefixes.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
   );
 
-  if (!isProtected && !isAdminPage && !isAdminApi) return;
+  if (isPublicAiLab || (!isProtected && !isAdminPage && !isAdminApi)) return;
 
   const email = String(req.auth?.user?.email || '').trim();
   const isSignedIn = Boolean(email);
