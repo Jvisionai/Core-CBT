@@ -1,0 +1,14 @@
+.git
+node_modules
+.next
+out
+coverage
+.env*
+!.env.example
+fastapi_app/.venv
+**/__pycache__
+**/.pytest_cache
+docs
+pdf
+*.md
+!README.md
