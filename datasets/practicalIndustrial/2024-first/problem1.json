@@ -163,8 +163,8 @@
       },
       {
         "problem_number": 18,
-        "question_text": "C언어 아래 string, test를 입력했을 때 출력결과",
-        "examples": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nint main()\n{\n    char str[100];\n    char *ptr;\n    int cnt = 2;\n\n    while(1)\n    {\n        printf(\\\"입력:\\\");\n        scanf(\\\"%s\\\", str);\n        ptr = (char*)malloc(strlen(str) + 1);\n        strcpy(ptr, str);\n        printf(\\\"%d번 출력:\\\", cnt);\n        for (int i = strlen(ptr) - 1; i >= 0; i--)\n        {\n            printf(\\\"%c\\\", ptr[i]);\n        }\n        if (cnt <= 1)\n            break;\n        else\n            cnt--;\n        printf(\\\"\\\\n\\\");\n    }\n    return 0;\n}\n",
+        "question_text": "C언어 아래 string, test를 순서대로 입력했을 때 출력결과를 쓰시오. (가)는 \"1번 출력:\" 뒤의 값, (나)는 \"2번 출력:\" 뒤의 값",
+        "examples": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nint main()\n{\n    char str[100];\n    char *ptr;\n    int cnt = 2;\n\n    while(1)\n    {\n        printf(\"입력:\");\n        scanf(\"%s\", str);\n        ptr = (char*)malloc(strlen(str) + 1);\n        strcpy(ptr, str);\n        printf(\"%d번 출력:\", cnt);\n        for (int i = strlen(ptr) - 1; i >= 0; i--)\n        {\n            printf(\"%c\", ptr[i]);\n        }\n        if (cnt <= 1)\n            break;\n        else\n            cnt--;\n        printf(\"\\n\");\n    }\n    return 0;\n}\n",
         "input_type": "multi_blank",
         "answer_format_hint": "예: 항목별 답을 함께 입력",
         "category": "Code",

@@ -339,7 +339,7 @@
           "LEFT JOIN A.EMP_ID=B.EMP_ID",
           "INNER JOIN A.MGR_ID=B.EMP_ID",
           "LEFT JOIN A.MGR_ID=B.EMP_ID",
-          "LEFT JOIN A.EMP_ID=B.EMP_ID"
+          "INNER JOIN A.EMP_ID=B.MGR_ID"
         ]
       },
       {
@@ -367,10 +367,10 @@
         "problem_number": 36,
         "question_text": "COUNT(DISTINCT COL1) WHERE COL2<=20?",
         "options": [
-          "2 ✓",
+          "2",
           "3",
-          "GROUP BY 결과",
-          "GROUP BY 결과"
+          "1",
+          "4"
         ],
         "examples": "데이터: (A,10),(A,20),(B,20),(C,30)"
       },

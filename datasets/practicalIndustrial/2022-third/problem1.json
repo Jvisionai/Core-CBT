@@ -15,7 +15,7 @@
         "problem_number": 2,
         "question_text": "트랜잭션의 특성 중 괄호에 들어가기에 적합한 데이터베이스의 기능을 그림에서 한 가지만 찾아 쓰시오.",
         "examples": "트랜잭션의 특성: 원자성, 일관성, 고립성, 영속성\n데이터베이스의 기능: 무결성 제약 조건, 동시성 제어, 회복\n\n원자성 : (1)\n일관성 : 무결성 제약 조건, 동시성 제어\n고립성 : (2)\n영속성 : 회복\n\n(1) :\n(2) :",
-        "input_type": "single",
+        "input_type": "multi_blank",
         "category": "SQL",
         "subcategory": "theory"
       },

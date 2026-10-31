@@ -6,7 +6,7 @@
         "problem_number": 1,
         "question_text": "다음은 애플리케이션 테스트에서 수행해야 할 작업들이다. 각 작업들을 수행 순서에 맞게 나열하시오.",
         "examples": "ㄱ. 테스트 방법이 결정되면 그에 맞는 테스트 케이스를 작성한다.\nㄴ. 무엇을 테스트 할 것인지 결정한다.\nㄷ. 테스트 방법을 정한다.\nㄹ. 테스트의 예상 결과를 정리한다.\nㅁ. 테스트를 수행한다.",
-        "input_type": "single",
+        "input_type": "ordered_sequence",
         "answer_format_hint": "예: ㄱ-ㄴ-ㄷ-ㄹ",
         "category": "이론",
         "subcategory": "소프트웨어공학"

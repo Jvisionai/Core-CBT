@@ -2,9 +2,9 @@
   {
     "title": "AI 프롬프트엔지니어링 2급",
     "answers": [
-      { "problem_number": 1, "correct_answer_index": 4, "correct_answer_text": "AI가 생성한 결과물을 자신의 창작물인 것처럼 표현하지 않아야 한다" },
-      { "problem_number": 2, "correct_answer_index": 3, "correct_answer_text": "훈련 데이터셋에 포함된 저작권 보호 작품에 대한 라이선스를 확보해야 한다." },
-      { "problem_number": 3, "correct_answer_index": 4, "correct_answer_text": "프롬프트 입력 시 민감한 개인정보가 포함되지 않도록 사용자에게 가이드라인을 제공해야 한다." }
+      { "problem_number": 1, "correct_answer_index": 3, "correct_answer_text": "AI가 생성한 결과물을 자신의 창작물인 것처럼 표현하지 않아야 한다" },
+      { "problem_number": 2, "correct_answer_index": 2, "correct_answer_text": "훈련 데이터셋에 포함된 저작권 보호 작품에 대한 라이선스를 확보해야 한다." },
+      { "problem_number": 3, "correct_answer_index": 3, "correct_answer_text": "프롬프트 입력 시 민감한 개인정보가 포함되지 않도록 사용자에게 가이드라인을 제공해야 한다." }
     ]
   }
 ]

@@ -22,9 +22,12 @@ const allProviders = [
       ) {
         return { id: 'admin', name: '관리자', email: 'admin@example.com', role: 'admin' };
       }
+      // 테스트 계정은 TEST_LOGIN_PW가 설정된 환경에서만 활성화
+      const testLoginPw = String(process.env.TEST_LOGIN_PW || '');
       if (
+        testLoginPw &&
         credentials?.username === 'testuser' &&
-        credentials?.password === 'test1234'
+        credentials?.password === testLoginPw
       ) {
         return { id: 'testuser', name: '테스트유저', email: 'testuser@test.com', role: 'user' };
       }
