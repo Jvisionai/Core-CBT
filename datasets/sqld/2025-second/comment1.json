@@ -137,7 +137,7 @@
       },
       {
         "problem_number": 33,
-        "comment": "정답: ③ LEFT JOIN A.MGR_ID = B.EMP_ID\n\n[핵심] 사원 A와 그의 관리자(B)를 셀프조인하되, 관리자 없는 사원도 포함하려면 LEFT JOIN.\n\n[풀이] A.MGR_ID(부장 ID) = B.EMP_ID(부장 자신)로 매칭. INNER JOIN이면 관리자 없는 최상위 직원(예: CEO)이 결과에서 누락. LEFT JOIN으로 좌측(사원) 전부를 보존하면 안전.\n\n[오답]\n① LEFT JOIN A.EMP_ID=B.EMP_ID: 자기 자신과 조인 (의미 없음)\n② INNER JOIN A.MGR_ID=B.EMP_ID: 관리자 없는 사원 누락\n④ LEFT JOIN A.EMP_ID=B.EMP_ID: 자기 자신과 매칭\n\n[암기] 관리자 조인: A.MGR = B.EMP, LEFT로 보존."
+        "comment": "정답: ③ LEFT JOIN A.MGR_ID = B.EMP_ID\n\n[핵심] 사원 A와 그의 관리자(B)를 셀프조인하되, 관리자 없는 사원도 포함하려면 LEFT JOIN.\n\n[풀이] A.MGR_ID(부장 ID) = B.EMP_ID(부장 자신)로 매칭. INNER JOIN이면 관리자 없는 최상위 직원(예: CEO)이 결과에서 누락. LEFT JOIN으로 좌측(사원) 전부를 보존하면 안전.\n\n[오답]\n① LEFT JOIN A.EMP_ID=B.EMP_ID: 자기 자신과 조인 (의미 없음)\n② INNER JOIN A.MGR_ID=B.EMP_ID: 관리자 없는 사원 누락\n④ RIGHT JOIN A.EMP_ID=B.MGR_ID: 조인 방향이 반대(관리자 기준)라 사원 목록이 보존되지 않음\n\n[암기] 관리자 조인: A.MGR = B.EMP, LEFT로 보존."
       },
       {
         "problem_number": 34,
@@ -149,7 +149,7 @@
       },
       {
         "problem_number": 36,
-        "comment": "정답: ① 2 ✓\n[데이터] (A,10), (A,20), (B,20), (C,30) [쿼리] COUNT(DISTINCT COL1) WHERE COL2<=20\n\n[핵심] WHERE로 행 필터링 → DISTINCT 개수 산출.\n\n[풀이] WHERE COL2<=20 → (A,10), (A,20), (B,20) 3행. COL1의 distinct = {A, B} = 2개.\n\n[오답]\n② 3: 행 수와 혼동\n③/④ GROUP BY 결과: 다른 형식 결과\n\n[암기] 필터 후 DISTINCT는 고유 값 개수만."
+        "comment": "정답: ① 2\n[데이터] (A,10), (A,20), (B,20), (C,30) [쿼리] COUNT(DISTINCT COL1) WHERE COL2<=20\n\n[핵심] WHERE로 행 필터링 → DISTINCT 개수 산출.\n\n[풀이] WHERE COL2<=20 → (A,10), (A,20), (B,20) 3행. COL1의 distinct = {A, B} = 2개.\n\n[오답]\n② 3: 행 수와 혼동\n③ 1: B 또는 A 하나만 센 경우\n④ 4: WHERE 없이 전체 행 수를 센 경우\n\n[암기] 필터 후 DISTINCT는 고유 값 개수만."
       },
       {
         "problem_number": 37,
