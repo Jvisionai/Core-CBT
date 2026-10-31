@@ -515,7 +515,7 @@
             },
             {
                 "problem_number": 51,
-                "question_text": "후위 표기식이 다음과 같을 때 연산 결과는? 3 4 5 6 * +",
+                "question_text": "후위 표기식이 다음과 같을 때 연산 결과는? 3 4 * 5 6 * +",
                 "options": [
                     "42",
                     "210",
@@ -596,7 +596,7 @@
             },
             {
                 "problem_number": 59,
-                "question_text": "STUDENT 테이블은 50개의 튜플이 정의되어 있으며, \"S-AGE\" 열의 값은 정수 값으로 되어 있다. \"S-AGE\" 값이 10인 튜플이 10개, 19인 튜플이 35개, 20인 튜플이 5개일 경우, 다음 두 SQL 문의 실행 결과 값을 순서대로 옳게 나타낸 것은? SELECT DISTINCT S-AGE FROM STUDENT; SELECT DISTINCT S-AGE FROM STUDENT WHERE S-AGE \u003e 10;",
+                "question_text": "STUDENT 테이블은 50개의 튜플이 정의되어 있으며, \"S-AGE\" 열의 값은 정수 값으로 되어 있다. \"S-AGE\" 값이 10인 튜플이 10개, 19인 튜플이 35개, 20인 튜플이 5개일 경우, 다음 두 SQL 문의 실행 결과 값을 순서대로 옳게 나타낸 것은? SELECT DISTINCT S-AGE FROM STUDENT; SELECT DISTINCT S-AGE FROM STUDENT WHERE S-AGE \u003e 19;",
                 "options": [
                     "50, 40",
                     "50, 5",
