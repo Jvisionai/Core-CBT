@@ -77,7 +77,7 @@
         "problem_number": 9,
         "question_text": "애플리케이션 테스트에 대한 다음 설명에서 괄호(1, 2)에 들어갈 알맞은 용어를 쓰시오.",
         "examples": "-(  1  ) 박스 테스트는 소프트웨어가 수행할 특정 기능을 알기 위해서 각 기능이 완전히 작동되는 것을 입증하는 테스트로, 기능 테스트라고도 한다. 사용자의 요구사항 명세를 보면서 테스트하며, 주로 구현된 기능을 테스트한다.\n-(  2  ) 박스 테스트는 모듈의 원시 코드를 오픈시킨 상태에서 원시 코드의 논리적인 모든 경로를 테스트하여 테스트 케이스를 설계하는 방법이다",
-        "input_type": "single",
+        "input_type": "multi_blank",
         "category": "이론",
         "subcategory": "소프트웨어공학"
       },
@@ -93,7 +93,7 @@
         "problem_number": 11,
         "question_text": "다음은 <성적> 테이블에서 점수가 80 이상 90 이하인 모든 튜플을 조회하는 두 가지 방법을 보여주는 <SQL문>이다. 괄호(1, 2)에 알맞은 답을 적어 <SQL문>을 완성하시오.",
         "examples": "<SQL 문>\n방법 1 - SELECT + FROM 성적 WHERE 점수 >= 80(  1  ) 점수 <= 90;\n방법 2 - SELECT + FROM 성적 WHERE 점수(  2  )80 AND 90;",
-        "input_type": "single",
+        "input_type": "multi_blank",
         "category": "SQL",
         "subcategory": "query"
       },
@@ -117,7 +117,7 @@
         "problem_number": 14,
         "question_text": "데이터베이스에 대한 다음 설명에서 괄호에 들어갈 알맞은 답을 쓰시오",
         "examples": "스키마는 데이터베이스의 구조와 제약 조건에 관한 전반적인 명세를 기술한 것이다.\n-(  1  )스키마: 사용자나 응용 프로그래머가 각 개인의 입장에서 필요로 하는 데이터베이스의 논리적 구조를 정의한 것이다.\n-(  2  )스키마: 데이터베이스의 전체적인 논리적 구조이며, 모든 응용 프로그램이나 사용자들이 필요로 하는 데이터를 종합한 조직 전체의 데이터베이스로, 하나만 존재한다.\n-(  3  )스키마: 물리적 저장장치의 입장에서 본 데이터베이스 구조로, 실제로 저장될 레코드의 형식, 저장 데이터 항목의 표현 방법, 내부 레코드의 물리적 순서 등을 나타낸다",
-        "input_type": "single",
+        "input_type": "multi_blank",
         "category": "SQL",
         "subcategory": "theory"
       },
@@ -165,7 +165,7 @@
         "problem_number": 20,
         "question_text": "IP 주소는 네트워크 부분의 길이에 따라 A, B, C, D, E 클래스로 구성되어 있다. 다음 괄호(①~③)에 들어갈 알맞은 클래스를 쓰시오",
         "examples": "(1)  1 | 1 | 0 | 5bit | 8bit | 8bit | 8bit\n     [---------네트워크 ID----------][호스트 ID]\n\n(2)  1 | 0 | 6bit | 8bit | 8bit | 8bit\n     [----네트워크 ID----][- 호스트 ID -]\n\n(3)  0 | 7bit | 8bit | 8bit | 8bit\n   [네트워크 ID][---- 호스트 ID ----]",
-        "input_type": "single",
+        "input_type": "multi_blank",
         "category": "이론",
         "subcategory": "네트워크"
       }

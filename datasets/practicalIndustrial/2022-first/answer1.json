@@ -132,8 +132,9 @@
       {
         "problem_number": 15,
         "correct_answer_index": 0,
-        "correct_answer_text": "11, 17",
+        "correct_answer_text": "① 11 / ② 17",
         "accepted_answers": [
+          "11, 17",
           "11 17",
           "11명 이상, 17명 이하"
         ]

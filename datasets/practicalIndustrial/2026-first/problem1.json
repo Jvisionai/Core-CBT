@@ -8,6 +8,10 @@
         "examples": "<보기>\nㄱ. 프로그램의 내부 구조와 로직을 분석하여 테스트 케이스를 설계하는 방법\nㄴ. 입력값과 출력값을 기반으로 기능이 정상 동작하는지 검증하는 방법\nㄷ. 소스 코드의 실행 경로를 추적하여 모든 분기를 검증하는 방법\nㄹ. 요구사항 명세서를 기반으로 기능 요구사항의 충족 여부를 검증하는 방법",
         "input_type": "multi_blank",
         "answer_format_hint": "블랙박스 테스트: ㄴ, ㄹ / 화이트박스 테스트: ㄱ, ㄷ",
+        "input_labels": [
+          "블랙박스 테스트",
+          "화이트박스 테스트"
+        ],
         "category": "이론",
         "subcategory": "소프트웨어공학"
       },
@@ -124,7 +128,7 @@
         "problem_number": 15,
         "question_text": "다음 ㄱ~ㄹ의 테스트를 수행 순서대로 나열하시오.",
         "examples": "<보기>\nㄱ. 시스템 테스트\nㄴ. 인수 테스트\nㄷ. 통합 테스트\nㄹ. 단위 테스트",
-        "input_type": "single",
+        "input_type": "ordered_sequence",
         "answer_format_hint": "예: ㄱ → ㄴ → ㄷ → ㄹ",
         "category": "이론",
         "subcategory": "소프트웨어공학"
