@@ -339,7 +339,7 @@
           "LEFT JOIN A.EMP_ID=B.EMP_ID",
           "INNER JOIN A.MGR_ID=B.EMP_ID",
           "LEFT JOIN A.MGR_ID=B.EMP_ID",
-          "RIGHT JOIN A.EMP_ID=B.MGR_ID"
+          "INNER JOIN A.EMP_ID=B.MGR_ID"
         ]
       },
       {

@@ -39,7 +39,7 @@
       {
         "problem_number": 5,
         "question_text": "다음 데이터베이스의 정의(1~4)와 그에 대한 설명(a~d)이다. 각 정의에 맞는 설명을 기호로 쓰시오.",
-        "examples": "1) Operational Data\n2) Sharded Data\n3) Stored Data\n4) Integrated Data\n\na) 컴퓨터가 접근할 수 있는 저장 매체에 저장된 자료\nb) 자료의 중복을 배제한 데이터의 모임\nc) 여러 응용 시스템들이 공동으로 소유하고 유지하는 자료\nd) 조직의 고유한 업무를 수행하는 데 반드시 필요한 자료",
+        "examples": "1) Operational Data\n2) Shared Data\n3) Stored Data\n4) Integrated Data\n\na) 컴퓨터가 접근할 수 있는 저장 매체에 저장된 자료\nb) 자료의 중복을 배제한 데이터의 모임\nc) 여러 응용 시스템들이 공동으로 소유하고 유지하는 자료\nd) 조직의 고유한 업무를 수행하는 데 반드시 필요한 자료",
         "input_type": "multi_blank",
         "answer_format_hint": "예: 1) 값 / 2) 값",
         "category": "SQL",

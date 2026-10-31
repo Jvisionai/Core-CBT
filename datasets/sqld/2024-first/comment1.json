@@ -125,7 +125,7 @@
       },
       {
         "problem_number": 30,
-        "comment": "순방향: CONNECT BY PRIOR 자식컬럼 = 부모컬럼."
+        "comment": "정답: ② ㄴ 위치\n\n[핵심] 순방향(부모→자식) 전개는 CONNECT BY PRIOR 부모쪽컬럼(EMP) = 자식쪽컬럼(MGR).\n\n[풀이] 순방향은 \"이전(PRIOR) 행의 EMP가 현재 행의 MGR인 행\"을 찾는다. 즉 CONNECT BY PRIOR EMP = MGR이고, 이는 MGR = PRIOR EMP와 같다. 따라서 CONNECT BY (ㄱ) MGR = (ㄴ) EMP에서 PRIOR는 ㄴ 위치에 온다.\n\n[오답]\n① ㄱ 위치: PRIOR MGR = EMP는 자식→부모로 올라가는 역방향 전개이다.\n③ 양쪽 모두: PRIOR는 한쪽에만 쓴다.\n④ 없어도 동작: PRIOR가 없으면 계층 관계를 정의할 수 없다.\n\n[암기] 순방향 = PRIOR EMP(자기 사번) = MGR, PRIOR 붙은 쪽에서 출발"
       },
       {
         "problem_number": 31,

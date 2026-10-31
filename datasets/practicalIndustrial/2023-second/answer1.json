@@ -56,10 +56,12 @@
       {
         "problem_number": 9,
         "correct_answer_index": 0,
-        "correct_answer_text": "P=(S+W)/S 또는 (W+S)/S",
+        "correct_answer_text": "(S+W)/S",
         "accepted_answers": [
-          "p=(s+w)",
-          "(w+s)/s"
+          "P=(S+W)/S",
+          "P=(W+S)/S",
+          "(W+S)/S",
+          "(대기시간+서비스시간)/서비스시간"
         ]
       },
       {
